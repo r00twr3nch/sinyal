@@ -22,8 +22,10 @@ Real-time multiplayer party game. Turkish UI. One secret **Sinyalci** gets a beh
 - Mobile-first dark UI (`src/App.css`)
 - Phase router in `src/App.tsx`
 - Socket hook: `src/hooks/useSocket.ts` — single socket, merge state via refs
-- In DEV, connect with `SERVER_URL = '/'` so the Vite proxy is used (avoids cross-origin WS issues)
-- Optional `VITE_SERVER_URL` for phone/LAN direct server access
+- Default socket URL: `VITE_SERVER_URL` or same-origin `/` (Vite proxy in dev)
+- Home screen can override server URL in `localStorage` (`sinyal_server_url`) for Pages without secrets
+- Deploy: Render monolith, or Vercel/Pages UI + Render Socket (`vercel.json`, `render.yaml`)
+- Do not put Socket.IO on Vercel serverless — needs a long-lived Node process
 
 ## Scoring
 

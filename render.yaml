@@ -1,3 +1,5 @@
+# Game server (Socket.IO). Pair with Vercel/GitHub Pages for the UI,
+# or open this service URL directly (it can also serve dist/ if built).
 services:
   - type: web
     name: sinyal
@@ -9,9 +11,7 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Allow GitHub Pages / custom domain frontends to talk to this API
-      - key: CLIENT_ORIGIN
-        value: https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://yunusemredurak.com.tr,http://localhost:5173
-      # Allow GitHub Pages / custom domain frontends to talk to this API
+      # Comma-separated browser origins allowed to connect via Socket.IO / CORS.
+      # Add your Vercel URL after first deploy, e.g. https://sinyal.vercel.app
       - key: CLIENT_ORIGIN
         value: https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://yunusemredurak.com.tr,http://localhost:5173

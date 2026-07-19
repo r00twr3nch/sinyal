@@ -78,6 +78,8 @@ Sonra `npm run dev` yeniden başlatın.
 
 ## Yayınlama (deploy)
 
+Socket.IO sunucusu **sürekli çalışan Node process** ister. Vercel/GitHub Pages yalnız UI içindir.
+
 ### A) Hepsi bir arada (en basit)
 
 Frontend + backend tek Node servisi — [Render](https://render.com) ücretsiz plan:
@@ -91,18 +93,57 @@ Frontend + backend tek Node servisi — [Render](https://render.com) ücretsiz p
 
 > Ücretsiz planda uyku olabilir; ilk açılış 30–60 sn sürebilir.
 
-### B) GitHub Pages + ayrı oyun sunucusu
+### B) Vercel (UI) + Render (oyun sunucusu) — önerilen hibrit
 
-Pages **sadece arayüzü** barındırır. Oda/oyuncu mantığı için yine bir Node sunucusu gerekir.
+Herkes tek Vercel linkinden girer; kimse sunucu URL’si yapıştırmaz.
 
-1. **Backend (Render):** yukarıdaki gibi deploy et → URL’yi not al  
-   örn. `https://sinyal-xxxx.onrender.com`
-2. **Pages:** repo → **Settings → Pages → Source: GitHub Actions**
-3. (İsteğe bağlı) repo **Settings → Secrets → Actions**  
-   `VITE_SERVER_URL` = `https://sinyal-xxxx.onrender.com`  
-   Böylece build sırasında varsayılan sunucu gömülür.
-4. `main`’e push → **Deploy GitHub Pages** workflow çalışır  
-   Site: `https://r00twr3nch.github.io/sinyal/`
-5. Secret yoksa ana ekranda **Sunucu ayarı** ile Render URL’sini gir (localStorage’da kalır).
+```text
+https://sinyal.vercel.app  →  UI (Vercel)
+            │  VITE_SERVER_URL
+            ▼
+https://sinyal-xxxx.onrender.com  →  Socket.IO (Render)
+```
 
-Geliştirmede Vite proxy kullanılır; production’da monolit deploy’da Express `dist/` + Socket.IO’yu aynı origin’den sunar.
+#### 1) Render backend
+
+1. [Render](https://dashboard.render.com) → **New → Web Service** → `r00twr3nch/sinyal`
+2. Build: `npm install && npm run build` · Start: `npm start` · Free
+3. Env:
+   - `NODE_ENV` = `production`
+   - `CLIENT_ORIGIN` = şimdilik  
+     `http://localhost:5173,https://r00twr3nch.github.io,https://yunusemredurak.com.tr`  
+     (Vercel URL’si çıkınca ekleyeceksin)
+4. Deploy → URL’yi kopyala, örn. `https://sinyal-xxxx.onrender.com`
+5. Kontrol: `…/health` → `{"ok":true,"name":"Signal"}`
+
+#### 2) Vercel frontend
+
+1. [vercel.com/new](https://vercel.com/new) → GitHub `r00twr3nch/sinyal` import
+2. Framework: **Vite** (otomatik / `vercel.json`)
+3. **Environment Variables** (Production):
+   - `VITE_SERVER_URL` = `https://sinyal-xxxx.onrender.com`  ← Render URL
+4. Deploy → `https://….vercel.app` adresini kopyala
+
+#### 3) CORS’u Vercel’e aç
+
+Render → service → **Environment** → `CLIENT_ORIGIN` içine Vercel origin’ini ekle:
+
+```text
+https://YOUR-APP.vercel.app,https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://localhost:5173
+```
+
+Save → Render servisi restart.
+
+Bundan sonra herkes yalnızca Vercel linkini açar; bağlantı otomatik.
+
+### C) GitHub Pages + Render
+
+Pages yalnız UI. Aynı model: Render backend + (opsiyonel) Actions secret `VITE_SERVER_URL`.
+
+1. Backend’i (B/1) gibi deploy et
+2. Repo → **Settings → Secrets → Actions** → `VITE_SERVER_URL`
+3. **Deploy GitHub Pages** workflow / `main` push
+4. Site: `https://r00twr3nch.github.io/sinyal/`  
+   Secret yoksa ana ekranda **Sunucu ayarı** (yalnız o tarayıcı)
+
+Geliştirmede Vite proxy kullanılır; monolit Render deploy’da Express `dist/` + Socket.IO’yu aynı origin’den sunar.
