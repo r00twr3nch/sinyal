@@ -78,18 +78,31 @@ Sonra `npm run dev` yeniden başlatın.
 
 ## Yayınlama (deploy)
 
-Bu oyun **canlı Socket.IO sunucusu** ister. GitHub Pages yalnızca statik dosya sunar; oda/oyun mantığı orada çalışmaz.
+### A) Hepsi bir arada (en basit)
 
-Önerilen yol: kodu GitHub’a koy, frontend + backend’i **tek Node servisi** olarak [Render](https://render.com) (ücretsiz plan) üzerinde çalıştır.
+Frontend + backend tek Node servisi — [Render](https://render.com) ücretsiz plan:
 
-1. Repo’yu GitHub’a push’la.
-2. [Render Dashboard](https://dashboard.render.com) → **New → Blueprint** (veya Web Service) → bu repo’yu seç.
-3. `render.yaml` varsa ayarlar otomatik gelir:
+1. [Render Dashboard](https://dashboard.render.com) → **New → Blueprint** → bu repo
+2. `render.yaml` ayarları:
    - **Build:** `npm install && npm run build`
    - **Start:** `npm start`
    - **Health:** `/health`
-4. Deploy bitince verilen `https://….onrender.com` adresinden oyna.
+3. `https://….onrender.com` adresinden oyna
 
-Üretimde Express hem `dist/` (Vite build) hem Socket.IO’yu aynı origin’den sunar; ekstra `VITE_SERVER_URL` gerekmez.
+> Ücretsiz planda uyku olabilir; ilk açılış 30–60 sn sürebilir.
 
-> Not: Render ücretsiz plan uyku moduna girebilir; ilk açılış 30–60 sn sürebilir.
+### B) GitHub Pages + ayrı oyun sunucusu
+
+Pages **sadece arayüzü** barındırır. Oda/oyuncu mantığı için yine bir Node sunucusu gerekir.
+
+1. **Backend (Render):** yukarıdaki gibi deploy et → URL’yi not al  
+   örn. `https://sinyal-xxxx.onrender.com`
+2. **Pages:** repo → **Settings → Pages → Source: GitHub Actions**
+3. (İsteğe bağlı) repo **Settings → Secrets → Actions**  
+   `VITE_SERVER_URL` = `https://sinyal-xxxx.onrender.com`  
+   Böylece build sırasında varsayılan sunucu gömülür.
+4. `main`’e push → **Deploy GitHub Pages** workflow çalışır  
+   Site: `https://r00twr3nch.github.io/sinyal/`
+5. Secret yoksa ana ekranda **Sunucu ayarı** ile Render URL’sini gir (localStorage’da kalır).
+
+Geliştirmede Vite proxy kullanılır; production’da monolit deploy’da Express `dist/` + Socket.IO’yu aynı origin’den sunar.

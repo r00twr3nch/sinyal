@@ -3,15 +3,26 @@ import { useState, type FormEvent } from 'react'
 interface HomeProps {
   connected: boolean
   error: string | null
+  serverUrl: string
+  onServerUrlChange: (url: string) => void
   onCreate: (name: string) => Promise<unknown>
   onJoin: (code: string, name: string) => Promise<unknown>
   onClearError: () => void
 }
 
-export function Home({ connected, error, onCreate, onJoin, onClearError }: HomeProps) {
-  const [mode, setMode] = useState<'menu' | 'create' | 'join'>('menu')
+export function Home({
+  connected,
+  error,
+  serverUrl,
+  onServerUrlChange,
+  onCreate,
+  onJoin,
+  onClearError,
+}: HomeProps) {
+  const [mode, setMode] = useState<'menu' | 'create' | 'join' | 'server'>('menu')
   const [name, setName] = useState('')
   const [code, setCode] = useState('')
+  const [serverDraft, setServerDraft] = useState(serverUrl === '/' ? '' : serverUrl)
   const [loading, setLoading] = useState(false)
 
   async function handleCreate(e: FormEvent) {
@@ -28,6 +39,14 @@ export function Home({ connected, error, onCreate, onJoin, onClearError }: HomeP
     setLoading(false)
   }
 
+  function handleServerSave(e: FormEvent) {
+    e.preventDefault()
+    onServerUrlChange(serverDraft.trim() || '/')
+    setMode('menu')
+  }
+
+  const needsRemoteServer = import.meta.env.PROD && (serverUrl === '/' || !connected)
+
   return (
     <div className="screen home">
       <div className="hero">
@@ -40,7 +59,13 @@ export function Home({ connected, error, onCreate, onJoin, onClearError }: HomeP
         </p>
       </div>
 
-      {!connected && <div className="banner warn">Sunucuya bağlanılıyor…</div>}
+      {!connected && (
+        <div className="banner warn">
+          {needsRemoteServer
+            ? 'Oyun sunucusuna bağlanılamadı. Aşağıdan sunucu adresini ayarla.'
+            : 'Sunucuya bağlanılıyor…'}
+        </div>
+      )}
       {error && (
         <div className="banner error" onClick={onClearError} role="alert">
           {error}
@@ -55,6 +80,22 @@ export function Home({ connected, error, onCreate, onJoin, onClearError }: HomeP
           <button className="btn secondary" disabled={!connected} onClick={() => setMode('join')}>
             Koda Katıl
           </button>
+          <button
+            className="btn ghost"
+            type="button"
+            onClick={() => {
+              setServerDraft(serverUrl === '/' ? '' : serverUrl)
+              setMode('server')
+            }}
+          >
+            Sunucu ayarı
+          </button>
+          {serverUrl !== '/' && (
+            <p className="muted tiny">
+              Sunucu: {serverUrl}
+              {connected ? ' · bağlı' : ' · kopuk'}
+            </p>
+          )}
           <div className="how-to">
             <h3>Nasıl oynanır?</h3>
             <ol>
@@ -66,6 +107,43 @@ export function Home({ connected, error, onCreate, onJoin, onClearError }: HomeP
             </ol>
           </div>
         </div>
+      )}
+
+      {mode === 'server' && (
+        <form className="stack card" onSubmit={handleServerSave}>
+          <h2>Oyun sunucusu</h2>
+          <p className="muted tiny">
+            GitHub Pages sadece arayüzü barındırır. Oda/oyun için Render (veya benzeri) üzerindeki
+            sunucu adresini gir.
+          </p>
+          <label>
+            Sunucu URL
+            <input
+              autoFocus
+              type="url"
+              placeholder="https://sinyal-xxxx.onrender.com"
+              value={serverDraft}
+              onChange={(e) => setServerDraft(e.target.value)}
+            />
+          </label>
+          <button className="btn primary" type="submit">
+            Kaydet ve bağlan
+          </button>
+          <button
+            className="btn ghost"
+            type="button"
+            onClick={() => {
+              setServerDraft('')
+              onServerUrlChange('/')
+              setMode('menu')
+            }}
+          >
+            Varsayılan (aynı origin)
+          </button>
+          <button className="btn ghost" type="button" onClick={() => setMode('menu')}>
+            Geri
+          </button>
+        </form>
       )}
 
       {mode === 'create' && (

@@ -9,7 +9,11 @@ import { randomUUID } from 'node:crypto'
 import { RoomManager, type Vote } from './game.js'
 
 const PORT = Number(process.env.PORT) || 3001
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || true
+// Comma-separated origins, or omit for reflect-any (dev / open party game).
+// Example: CLIENT_ORIGIN=https://r00twr3nch.github.io,http://localhost:5173
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(',').map((s) => s.trim()).filter(Boolean)
+  : true
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const distPath = path.resolve(__dirname, '../dist')
 

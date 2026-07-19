@@ -11,12 +11,35 @@ import type {
 
 type AppSocket = Socket<ServerToClientEvents, ClientToServerEvents>
 
-// Same-origin by default (Vite proxy in dev, Express static+Socket in prod).
-// Override with VITE_SERVER_URL only when client and server are on different hosts.
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || '/'
+const STORAGE_KEY = 'sinyal_server_url'
+
+function normalizeServerUrl(raw: string): string {
+  const trimmed = raw.trim().replace(/\/+$/, '')
+  if (!trimmed || trimmed === '/') return '/'
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return '/'
+    return url.origin
+  } catch {
+    return '/'
+  }
+}
+
+function readStoredServerUrl(): string {
+  if (typeof window === 'undefined') return '/'
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) return normalizeServerUrl(stored)
+  } catch {
+    /* ignore */
+  }
+  // Build-time default (GitHub Pages → free backend). Same-origin fallback for local/prod monolith.
+  return normalizeServerUrl(import.meta.env.VITE_SERVER_URL || '/')
+}
 
 export function useSocket() {
   const socketRef = useRef<AppSocket | null>(null)
+  const [serverUrl, setServerUrlState] = useState(readStoredServerUrl)
   const [connected, setConnected] = useState(false)
   const [state, setState] = useState<ClientState | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -38,8 +61,20 @@ export function useSocket() {
     })
   }, [])
 
+  const setServerUrl = useCallback((next: string) => {
+    const normalized = normalizeServerUrl(next)
+    try {
+      if (normalized === '/') localStorage.removeItem(STORAGE_KEY)
+      else localStorage.setItem(STORAGE_KEY, normalized)
+    } catch {
+      /* ignore */
+    }
+    setServerUrlState(normalized)
+  }, [])
+
   useEffect(() => {
-    const socket: AppSocket = io(SERVER_URL, {
+    setConnected(false)
+    const socket: AppSocket = io(serverUrl, {
       autoConnect: true,
       transports: ['websocket', 'polling'],
     })
@@ -70,8 +105,9 @@ export function useSocket() {
     return () => {
       socket.removeAllListeners()
       socket.disconnect()
+      socketRef.current = null
     }
-  }, [mergeState])
+  }, [mergeState, serverUrl])
 
   const api = useMemo(
     () => ({
@@ -155,5 +191,5 @@ export function useSocket() {
     [mergeState],
   )
 
-  return { connected, state, error, api, playerId }
+  return { connected, state, error, api, playerId, serverUrl, setServerUrl }
 }

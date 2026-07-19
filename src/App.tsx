@@ -7,13 +7,15 @@ import { useSocket } from './hooks/useSocket'
 import './App.css'
 
 export default function App() {
-  const { connected, state, error, api } = useSocket()
+  const { connected, state, error, api, serverUrl, setServerUrl } = useSocket()
 
   if (!state) {
     return (
       <Home
         connected={connected}
         error={error}
+        serverUrl={serverUrl}
+        onServerUrlChange={setServerUrl}
         onCreate={api.createRoom}
         onJoin={api.joinRoom}
         onClearError={api.clearError}

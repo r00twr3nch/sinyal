@@ -124,6 +124,8 @@ input:focus {
 
 .top-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .muted { color: var(--muted); font-size: 0.85rem; }
+.muted.tiny,
+.tiny { font-size: 0.8rem; line-height: 1.4; }
 
 .code-chip {
   appearance: none;
