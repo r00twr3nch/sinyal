@@ -9,9 +9,10 @@ services:
     startCommand: npm start
     healthCheckPath: /health
     envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: NODE_ENV
         value: production
       # Comma-separated browser origins allowed to connect via Socket.IO / CORS.
-      # Add your Vercel URL after first deploy, e.g. https://sinyal.vercel.app
       - key: CLIENT_ORIGIN
-        value: https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://yunusemredurak.com.tr,http://localhost:5173
+        value: https://sinyal-kappa.vercel.app,https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://yunusemredurak.com.tr,http://localhost:5173
