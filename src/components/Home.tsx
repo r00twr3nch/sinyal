@@ -96,16 +96,66 @@ export function Home({
               {connected ? ' · bağlı' : ' · kopuk'}
             </p>
           )}
-          <div className="how-to">
-            <h3>Nasıl oynanır?</h3>
-            <ol>
-              <li>Oda kur veya kodla gir (min. 3 kişi)</li>
-              <li>Her turda 1 kişi gizli Sinyalci olur</li>
-              <li>Sinyalci talimatını doğal uygular</li>
-              <li>Süre bitince herkes tahmin eder</li>
-              <li>Doğru bilenler ve ustaca sinyal veren puan alır</li>
+          <section className="how-to card" aria-labelledby="how-to-title">
+            <div className="how-to-header">
+              <span className="how-to-badge">Rehber</span>
+              <h3 id="how-to-title">Nasıl oynanır?</h3>
+              <p className="how-to-lead">
+                Gizli bir görev, doğal bir sohbet. Kim sinyal veriyor, yakala.
+              </p>
+            </div>
+            <ol className="how-to-steps">
+              <li className="how-to-step">
+                <span className="how-to-icon" aria-hidden="true">
+                  👥
+                </span>
+                <div className="how-to-body">
+                  <strong>Toplan</strong>
+                  <span>Oda kur veya kodla gir. En az 3 kişi gerekir.</span>
+                </div>
+              </li>
+              <li className="how-to-step">
+                <span className="how-to-icon" aria-hidden="true">
+                  🕵️
+                </span>
+                <div className="how-to-body">
+                  <strong>Gizli rol</strong>
+                  <span>Her turda biri Sinyalci olur; kim olduğu gizli kalır.</span>
+                </div>
+              </li>
+              <li className="how-to-step">
+                <span className="how-to-icon" aria-hidden="true">
+                  🎭
+                </span>
+                <div className="how-to-body">
+                  <strong>Doğal oyna</strong>
+                  <span>Sinyalci görevini abartmadan, sohbet içinde uygular.</span>
+                </div>
+              </li>
+              <li className="how-to-step">
+                <span className="how-to-icon" aria-hidden="true">
+                  🗳️
+                </span>
+                <div className="how-to-body">
+                  <strong>Tahmin et</strong>
+                  <span>Süre bitince herkes kim ve ne görev diye oy kullanır.</span>
+                </div>
+              </li>
+              <li className="how-to-step">
+                <span className="how-to-icon" aria-hidden="true">
+                  ⭐
+                </span>
+                <div className="how-to-body">
+                  <strong>Puan kap</strong>
+                  <span>Doğru bilenler ve dengeli sinyal veren Sinyalci puan alır.</span>
+                </div>
+              </li>
             </ol>
-          </div>
+            <div className="how-to-tips">
+              <span className="how-to-tip">İpucu: Çok bariz olma</span>
+              <span className="how-to-tip">İpucu: Herkesi izle</span>
+            </div>
+          </section>
         </div>
       )}
 
