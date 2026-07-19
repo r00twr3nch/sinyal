@@ -1,149 +1,190 @@
-# Sinyal
+<p align="center">
+  <img src="docs/banner.svg" alt="Sinyal — gizli görev, doğal sohbet" width="100%" />
+</p>
 
-Gerçek zamanlı parti oyunu. Oyuncular kendi telefonlarından bağlanır; her turda biri gizli **Sinyalci** olur ve talimatını davranışlarıyla uygular. Diğerleri kim olduğunu ve ne yaptığını tahmin eder.
+<p align="center">
+  <strong>Gizli bir Sinyalci. Doğal bir sohbet. Kim sinyal veriyor?</strong><br/>
+  Arkadaşlarınla aynı odada, herkes kendi telefonundan oynanan gerçek zamanlı parti oyunu.
+</p>
 
-## Gereksinimler
+<p align="center">
+  <a href="https://yunusemredurak.com.tr/sinyal/"><img src="https://img.shields.io/badge/▶_Oyna-yunusemredurak.com.tr-6c8cff?style=for-the-badge" alt="Oyna" /></a>
+  &nbsp;
+  <a href="https://r00twr3nch.github.io/sinyal/"><img src="https://img.shields.io/badge/GitHub_Pages-canlı-8b6cff?style=for-the-badge" alt="GitHub Pages" /></a>
+  &nbsp;
+  <a href="https://github.com/r00twr3nch/sinyal/stargazers"><img src="https://img.shields.io/github/stars/r00twr3nch/sinyal?style=for-the-badge&color=ff6b9d" alt="Stars" /></a>
+</p>
 
-- Node.js 20+
-- Aynı Wi‑Fi ağı (telefonlardan oynamak için)
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Socket.IO-4-010101?style=flat-square&logo=socketdotio&logoColor=white" alt="Socket.IO" />
+  <img src="https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/license-MIT-3dd68c?style=flat-square" alt="License" />
+</p>
 
-## Kurulum
+---
 
-```bash
-npm install
-```
+## Oyun nedir?
 
-## Geliştirme
+Her turda rastgele **bir kişi Sinyalci** seçilir. Sadece onun ekranında gizli bir davranış görevi görünür — örneğin cümlelere “aslında” ile başlamak, herkese soru sormak, abartılı iltifat etmek.
 
-```bash
-npm run dev
-```
+Diğerleri normal sohbet ederken kim olduğunu ve ne yaptığını çözmeye çalışır. Süre bitince oylama; puanlar dağılır; yeni tur.
 
-- Web: http://localhost:5173
-- API / Socket: http://localhost:3001
-- Sağlık: http://localhost:3001/health
+| | |
+|---|---|
+| 👥 **3–12 oyuncu** | Aynı masada, herkes kendi telefonundan |
+| 🕵️ **Gizli rol** | Sinyalci kimliği oylamaya kadar gizli kalır |
+| ⏱️ **Zamanlı tur** | Varsayılan ~3.5 dk sohbet + oylama |
+| 📱 **Mobil öncelik** | Karanlık, dokunmatik UI |
 
-VS Code’da **Terminal → Run Task → dev** ile de başlatılabilir (`.vscode/tasks.json`).
-
-Geliştirmede istemci Socket.IO’yu aynı origin üzerinden kullanır; Vite `/socket.io` isteklerini `3001` portuna proxy’ler.
-
-### Telefondan / LAN
-
-1. Bilgisayar ve telefon aynı Wi‑Fi’de olsun.
-2. Bilgisayarın yerel IP’sini öğrenin (ör. `192.168.1.20`).
-3. Telefonda `http://192.168.1.20:5173` açın.
-
-Proxy yalnızca Vite üzerinden çalışır. İstemcinin sunucuya doğrudan bağlanması gerekirse proje kökünde `.env`:
-
-```
-VITE_SERVER_URL=http://192.168.1.20:3001
-```
-
-Sonra `npm run dev` yeniden başlatın.
+---
 
 ## Nasıl oynanır?
 
-1. Biri **Oda Kur** der, kodu paylaşır.
-2. Diğerleri **Koda Katıl** ile girer (en az 3 kişi).
-3. Kurucu tur süresini seçip oyunu başlatır.
-4. Rastgele 1 kişi Sinyalci olur; sadece onun ekranında gizli talimat görünür.
-5. Süre bitince herkes sinyalciyi ve talimatı tahmin eder.
-6. Sonuçlar açılır, puanlar dağıtılır, sonraki tur başlar.
+```text
+  Oda kur ──► Kod paylaş ──► Herkes katılsın (min 3)
+       │
+       ▼
+  Tur başlar ──► 1 kişi Sinyalci + gizli görev
+       │
+       ▼
+  Sohbet / gözlem ──► Süre biter
+       │
+       ▼
+  Oylama ──► Kim? Hangi görev? ──► Sonuç + puan
+```
 
-## Puanlama
+1. Biri **Oda Kur** der, oda kodunu paylaşır  
+2. Diğerleri **Koda Katıl** ile girer  
+3. Kurucu süreyi seçip oyunu başlatır  
+4. Sinyalci görevini doğal şekilde uygular  
+5. Herkes tahminini yapar, sonuçlar açılır  
+
+### Puanlama
 
 | Durum | Puan |
-|--------|------|
-| Sinyalciyi doğru bilmek | +2 |
-| Talimatı doğru bilmek | +1 |
-| Sinyalci: en az 2 kişi buldu ve çok belli değil | +3 |
-| Sinyalci: neredeyse herkes buldu (çok belli) | -2 |
-| Sinyalci: kimse bulamadı | +1 |
+|--------|:----:|
+| Sinyalciyi doğru bilmek | **+2** |
+| Görevi doğru bilmek | **+1** |
+| Sinyalci: ≥2 kişi buldu, çok belli değil | **+3** |
+| Sinyalci: neredeyse herkes buldu | **−2** |
+| Sinyalci: kimse bulamadı | **+1** |
 
-## Komutlar
+---
+
+## Hızlı başlangıç
+
+```bash
+# Node 20+
+npm install
+npm run dev
+```
+
+| | Adres |
+|---|---|
+| Web | http://localhost:5173 |
+| API / Socket | http://localhost:3001 |
+| Sağlık | http://localhost:3001/health |
+
+Aynı Wi‑Fi’deki telefondan: `http://<bilgisayar-ip>:5173`  
+Gerekirse kökte `.env`:
+
+```env
+VITE_SERVER_URL=http://192.168.1.20:3001
+```
+
+---
+
+## Stack
+
+```text
+┌─────────────┐     Socket.IO      ┌──────────────────┐
+│  React +    │ ◄────────────────► │  Express +       │
+│  Vite (UI)  │                    │  RoomManager     │
+└─────────────┘                    └──────────────────┘
+   GitHub Pages                       Render (Node)
+   yunusemredurak.com.tr/sinyal       sürekli process
+```
+
+| Katman | Teknoloji |
+|--------|-----------|
+| İstemci | React 19, TypeScript, Vite, socket.io-client |
+| Sunucu | Express 5, Socket.IO, tsx |
+| Oda durumu | Bellek içi (`RoomManager`) — DB yok |
+| Fazlar | `lobby` → `playing` → `voting` → `results` |
+
+### Komutlar
 
 | Komut | Açıklama |
 |--------|----------|
 | `npm run dev` | Sunucu + istemci birlikte |
-| `npm run dev:client` | Sadece Vite |
-| `npm run dev:server` | Sadece Socket sunucusu |
 | `npm run build` | Üretim derlemesi |
 | `npm start` | Sunucuyu başlat |
+| `npm run lint` | Oxlint |
 
-## Yapı
-
-- `src/` — React (mobil öncelikli UI)
-- `server/` — Express + Socket.IO oda/oyun mantığı
-- `server/signals.ts` — gizli talimat havuzu
-
-## Yayınlama (deploy)
-
-Socket.IO sunucusu **sürekli çalışan Node process** ister. Vercel/GitHub Pages yalnız UI içindir.
-
-### A) Hepsi bir arada (en basit)
-
-Frontend + backend tek Node servisi — [Render](https://render.com) ücretsiz plan:
-
-1. [Render Dashboard](https://dashboard.render.com) → **New → Blueprint** → bu repo
-2. `render.yaml` ayarları:
-   - **Build:** `npm install && npm run build`
-   - **Start:** `npm start`
-   - **Health:** `/health`
-3. `https://….onrender.com` adresinden oyna
-
-> Ücretsiz planda uyku olabilir; ilk açılış 30–60 sn sürebilir.
-
-### B) Vercel (UI) + Render (oyun sunucusu) — önerilen hibrit
-
-Herkes tek Vercel linkinden girer; kimse sunucu URL’si yapıştırmaz.
+### Klasörler
 
 ```text
-https://sinyal.vercel.app  →  UI (Vercel)
-            │  VITE_SERVER_URL
-            ▼
-https://sinyal-xxxx.onrender.com  →  Socket.IO (Render)
+src/                 React UI (mobil öncelikli)
+server/game.ts       Oda / tur / puan mantığı
+server/signals.ts    Gizli görev havuzu
+server/index.ts      Express + Socket.IO
+.github/workflows/   GitHub Pages deploy
+render.yaml          Render blueprint
 ```
 
-#### 1) Render backend
+---
 
-1. [Render](https://dashboard.render.com) → **New → Web Service** → `r00twr3nch/sinyal`
-2. Build: `npm install && npm run build` · Start: `npm start` · Free
-3. Env:
-   - `NODE_ENV` = `production`
-   - `CLIENT_ORIGIN` = şimdilik  
-     `http://localhost:5173,https://r00twr3nch.github.io,https://yunusemredurak.com.tr`  
-     (Vercel URL’si çıkınca ekleyeceksin)
-4. Deploy → URL’yi kopyala, örn. `https://sinyal-xxxx.onrender.com`
-5. Kontrol: `…/health` → `{"ok":true,"name":"Signal"}`
+## Canlı ortam
 
-#### 2) Vercel frontend
+| Parça | URL |
+|--------|-----|
+| 🎮 Oyun (önerilen) | [yunusemredurak.com.tr/sinyal](https://yunusemredurak.com.tr/sinyal/) |
+| 📄 GitHub Pages | [r00twr3nch.github.io/sinyal](https://r00twr3nch.github.io/sinyal/) |
+| 🔌 Backend health | [sinyal-1-1h9v.onrender.com/health](https://sinyal-1-1h9v.onrender.com/health) |
 
-1. [vercel.com/new](https://vercel.com/new) → GitHub `r00twr3nch/sinyal` import
-2. Framework: **Vite** (otomatik / `vercel.json`)
-3. **Environment Variables** (Production):
-   - `VITE_SERVER_URL` = `https://sinyal-xxxx.onrender.com`  ← Render URL
-4. Deploy → `https://….vercel.app` adresini kopyala
+> Ücretsiz Render planında servis uyuyabilir; ilk istek 30–60 sn sürebilir.
 
-#### 3) CORS’u Vercel’e aç
+### Kendi deploy’un
 
-Render → service → **Environment** → `CLIENT_ORIGIN` içine Vercel origin’ini ekle:
+Socket.IO **uzun ömürlü Node process** ister — Vercel serverless uygun değil.
 
-```text
-https://YOUR-APP.vercel.app,https://r00twr3nch.github.io,https://yunusemredurak.com.tr,http://localhost:5173
+**A) Monolit (en basit)** — Render Blueprint (`render.yaml`): UI + socket aynı origin.
+
+**B) Hibrit (şu anki)** — Pages/UI + Render socket:
+
+1. Render’da Web Service → `npm install --include=dev && npm run build` / `npm start`  
+2. `CLIENT_ORIGIN` = UI origin’lerin (virgülle)  
+3. Pages Actions secret: `VITE_SERVER_URL=https://….onrender.com`  
+4. `main` push → Pages build  
+
+Secret yoksa ana ekrandaki **Sunucu ayarı** ile tarayıcıya URL yazılabilir (`localStorage`).
+
+Detaylı env örnekleri: [`.env.example`](.env.example)
+
+---
+
+## Katkı
+
+Issue / PR açık. Özellikle şunlar değerli:
+
+- Yeni görevler → [`server/signals.ts`](server/signals.ts)  
+- Kural ince ayarı → [`server/game.ts`](server/game.ts)  
+- UI kopyası Türkçe kalsın  
+
+```bash
+git clone https://github.com/r00twr3nch/sinyal.git
+cd sinyal
+npm install
+npm run dev
 ```
 
-Save → Render servisi restart.
+---
 
-Bundan sonra herkes yalnızca Vercel linkini açar; bağlantı otomatik.
-
-### C) GitHub Pages + Render
-
-Pages yalnız UI. Aynı model: Render backend + (opsiyonel) Actions secret `VITE_SERVER_URL`.
-
-1. Backend’i (B/1) gibi deploy et
-2. Repo → **Settings → Secrets → Actions** → `VITE_SERVER_URL`
-3. **Deploy GitHub Pages** workflow / `main` push
-4. Site: `https://r00twr3nch.github.io/sinyal/`  
-   Secret yoksa ana ekranda **Sunucu ayarı** (yalnız o tarayıcı)
-
-Geliştirmede Vite proxy kullanılır; monolit Render deploy’da Express `dist/` + Socket.IO’yu aynı origin’den sunar.
+<p align="center">
+  <sub>Yapıldı · oynandı · sinyal verildi</sub><br/>
+  <a href="https://yunusemredurak.com.tr/sinyal/">▶ Hemen oyna</a>
+  ·
+  <a href="https://github.com/r00twr3nch/sinyal/issues">Issue aç</a>
+</p>
